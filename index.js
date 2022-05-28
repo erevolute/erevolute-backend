@@ -7,7 +7,7 @@ const ObjectId = require('mongodb').ObjectId;
 require('dotenv').config()
 
 
-app.use(cors())
+app.use(cors({}))
 app.use(express.json())
 
 
