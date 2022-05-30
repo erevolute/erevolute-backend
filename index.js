@@ -5,10 +5,11 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 const port = process.env.PORT || 5000;
 const ObjectId = require('mongodb').ObjectId;
 require('dotenv').config()
-
+const fileUpload = require('express-fileupload')
 
 app.use(cors({}))
 app.use(express.json())
+app.use(fileUpload())
 
 
 
@@ -56,15 +57,72 @@ async function run() {
 
    // add  blog 
    app.post('/add' , async(req,res)=>{
-      const query = req.body;
+      const title = req.body.title;
+      const description = req.body.description;
+      const catagory = req.body.catagory;
+      const date = req.body.date;
+      const metaKeywords = req.body.metaKeywords;
+      const metaDescription = req.body.metaDescription;
+
+      
+      const image = req.files.img;
+      const imgData = image.data;
+      const encodedImg = imgData.toString('base64');
+      const imgBuffer = Buffer.from(encodedImg , 'base64')
+
+       const query = {
+         title : title,
+         description : description,
+         catagory : catagory,
+         date : date,
+         metaDescription : metaDescription,
+         metaKeywords : metaKeywords,
+         img : imgBuffer,
+      };
       const result = await blogsCollection.insertOne(query);
       
       res.send(result)
    })
 
-   // add portfolio 
+   // add portfolio
    app.post('/add-portfolio' , async(req,res)=>{
-      const query = req.body;
+
+      const name = req.body.name;
+      const description = req.body.description;
+      const catagory = req.body.catagory;
+      const siteLink = req.body.siteLink;
+      const date = req.body.date;
+      const metaKeywords = req.body.metaKeywords;
+      const metaDescription = req.body.metaDescription;
+
+      const image = req.files.img;
+      const imgData = image.data;
+      const encodedImg = imgData.toString('base64');
+      const imgBuffer = Buffer.from(encodedImg , 'base64')
+
+      const image2 = req.files.img2;
+      const imgData2 = image2.data;
+      const encodedImg2 = imgData2.toString('base64');
+      const imgBuffer2 = Buffer.from(encodedImg2 , 'base64')
+
+      const image3 = req.files.img3;
+      const imgData3 = image3.data;
+      const encodedImg3 = imgData3.toString('base64');
+      const imgBuffer3 = Buffer.from(encodedImg3 , 'base64')
+
+      
+      const query = {
+         name : name,
+         description : description,
+         catagory : catagory,
+         siteLink : siteLink,
+         date : date,
+         metaDescription : metaDescription,
+         metaKeywords : metaKeywords,
+         img : imgBuffer,
+         img2 : imgBuffer2,
+         img3 : imgBuffer3
+      };
       const result = await portfolioCollection.insertOne(query);
       
       res.send(result)
