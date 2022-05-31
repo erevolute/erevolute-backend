@@ -64,7 +64,6 @@ async function run() {
       const metaKeywords = req.body.metaKeywords;
       const metaDescription = req.body.metaDescription;
 
-      
       const image = req.files.img;
       const imgData = image.data;
       const encodedImg = imgData.toString('base64');
@@ -178,27 +177,48 @@ async function run() {
       res.send(result)
     });
 
-    app.put('/blogs/:id', async(req , res)=>{
+
+    app.patch('/blogs/:id', async(req , res)=>{
       const id = req.params.id ;
       const query = {_id:ObjectId(id)}
-      const blogtitle = req.body.title;
       const blogdescription = req.body.description;
       const blogdate = req.body.date;
-      const blogimg = req.body.img;
-      const blogcatagory = req.body.catagory;
+      const image = req.files.img;
+      const imgData = image.data;
+      const encodedImg = imgData.toString('base64');
+      const imgBuffer = Buffer.from(encodedImg , 'base64')
       const options = { upsert: true };
       const updateDoc = {
         $set: {
-         title : blogtitle,
-         img : blogimg,
+         img : imgBuffer,
          date : blogdate,
          description : blogdescription,
-         catagory : blogcatagory
         },
       };
       const result = await blogsCollection.updateMany(query, updateDoc, options);
       res.send(result)
     });
+
+    app.put('/blogs/:id', async(req , res)=>{
+      const id = req.params.id ;
+      const query = {_id:ObjectId(id)}
+      const blogtitle = req.body.title;
+      const blogcatagory = req.body.metaCat;
+      const metaKeywords = req.body.metaKey;
+      const metaDescription = req.body.metaDes;
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+         title : blogtitle,
+         catagory : blogcatagory,
+         metaDescription : metaDescription,
+         metaKeywords : metaKeywords
+        },
+      };
+      const result = await blogsCollection.updateOne(query, updateDoc, options);
+      res.send(result)
+    });
+      
 
    
   } finally {
