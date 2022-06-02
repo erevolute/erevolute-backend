@@ -7,21 +7,8 @@ const ObjectId = require('mongodb').ObjectId;
 require('dotenv').config()
 const fileUpload = require('express-fileupload')
 
-const whitelist = ["https://erevolute.com/"]
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || whitelist.indexOf(origin) !== -1) {
-      callback(null, true)
-    } else {
-      callback(new Error("Not allowed by CORS"))
-    }
-  },
-  credentials: true,
-}
-app.use(cors(corsOptions))
-app.use(cors());
-app.options('*', cors());
 
+app.use(cors());
 app.use(express.json())
 app.use(fileUpload())
 
@@ -159,38 +146,48 @@ async function run() {
 
    // update portfolio 
 
-   app.put('/portfolio/:id', async(req , res)=>{
+   app.patch('/portfolio/:id', async(req , res)=>{
       const id = req.params.id ;
       const query = {_id:ObjectId(id)}
-
-      const itemsBody1 = req.body.date
-      const itemsBody2 = req.body.description
-      const itemsBody3 = req.body.name
-      const itemsBody4 = req.body.siteLink
-      const itemsBody5 = req.body.img
-      const itemsBody6 = req.body.img3
-      const itemsBody7 = req.body.img2
-      const itemsBody8 = req.body.catagory
-     
-      // console.log(itemsBody1, itemsBody2 , itemsBody3 , itemsBody4 , itemsBody5 , itemsBody6 , itemsBody8 , itemsBody7,query)
-
+      const date = req.body.date;
+      const description = req.body.description;
+      const image = req.files.img;
+      const imgData = image.data;
+      const encodedImg = imgData.toString('base64');
+      const imgBuffer = Buffer.from(encodedImg , 'base64')
       const options = { upsert: true };
       const updateDoc = {
         $set: {
-         date : itemsBody1,
-         description : itemsBody2,
-         name : itemsBody3,
-         siteLink : itemsBody4,
-         img : itemsBody5,
-         img3 : itemsBody6,
-         img2 : itemsBody7,
-         catagory : itemsBody8
+         date : date,
+         description : description,
+         img : imgBuffer,
         },
       };
       const result = await portfolioCollection.updateMany(query, updateDoc, options);
       res.send(result)
     });
 
+    app.put('/portfolio/:id', async(req , res)=>{
+      const id = req.params.id ;
+      const query = {_id:ObjectId(id)}
+      const name = req.body.name;
+      const catagory = req.body.catagory;
+      const siteLink = req.body.siteLink;
+      const metaKeywords = req.body.metaKey;
+      const metaDescription = req.body.metaDes;
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          metaDescription : metaDescription,
+          metaKeywords : metaKeywords ,
+          name : name,
+          catagory : catagory ,
+          siteLink : siteLink
+        },
+      };
+      const result = await portfolioCollection.updateMany(query, updateDoc, options);
+      res.send(result)
+    });
 
     app.patch('/blogs/:id', async(req , res)=>{
       const id = req.params.id ;
@@ -198,6 +195,7 @@ async function run() {
       const blogdescription = req.body.description;
       const blogdate = req.body.date;
       const image = req.files.img;
+
       const imgData = image.data;
       const encodedImg = imgData.toString('base64');
       const imgBuffer = Buffer.from(encodedImg , 'base64')
