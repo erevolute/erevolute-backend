@@ -12,9 +12,9 @@ app.use(cors());
 app.use(express.json())
 app.use(fileUpload())
 
+const uri = `mongodb+srv://${process.env.USER_NAME}:${process.env.USER_PASS}@erevolute.ic1pzat.mongodb.net/?retryWrites=true&w=majority`;
 
-
-const uri = `mongodb+srv://${process.env.USER_NAME}:${process.env.USER_PASS}@cluster0.is333.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+// const uri = `mongodb+srv://@cluster0.is333.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 async function run() {
