@@ -8,7 +8,7 @@ require('dotenv').config()
 const fileUpload = require('express-fileupload')
 
 
-app.use(cors({ origin: 'https://erevolute.com/' }))
+app.use(cors({ origin: 'https://erevolute.com' }))
 app.use(express.json())
 app.use(fileUpload())
 
